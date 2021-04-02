@@ -24,12 +24,34 @@ Complete build instructions can be found on [cuSignal's installation README](htt
 * [No GPU](#no-gpu)
 
 ### Conda, Linux OS
-cuSignal can be installed with conda ([Miniconda](https://docs.conda.io/en/latest/miniconda.html), or the full [Anaconda distribution](https://www.anaconda.com/distribution/)) from the `rapidsai` channel. 
+cuSignal can be installed with conda ([Miniconda](https://docs.conda.io/en/latest/miniconda.html), or the full [Anaconda distribution](https://www.anaconda.com/distribution/)) from the `rapidsai` channel. Once installed, create a new cusignal environment and install the package. Instructions for doing this are shown below.
 
 ```
-conda install -c rapidsai python=3.8 cusignal
+# Create Conda Environment
+conda create --name cusignal python=3.8
+
+# Activate Conda Environment
+conda activate cusignal
+
+# Install cuSignal into cusignal Environment
+conda install -c rapidsai cusignal
+
+# Confirm cuSignal and its Dependencies Successfully Installed
+python
+>>> import cusignal
+>>> import cupy as cp
+>>> from numba import cuda
 ```
 
 ### No GPU
 No GPU? No problem. We can use Google Colab for access to a no-cost GPU instance.
+1. Navigate to Colab via [this link](https://colab.research.google.com/notebooks/intro.ipynb). If you're unfamiliar with notebook based programming (or Colab in general), feel free to take a few minutes to explore the getting started guide.
+2. Click `File -> New Notebook` to create a new Colab notebook.
+3. Install cuSignal
 
+## Notebooks Used in Today's Tutorial
+* [Introduction to cuSignal]
+* [CuPy Overview and Elementwise Kernels]
+* [Numba Overview and Custom CUDA Kernels]
+* [Brief Introduction of Raw CUDA Kernels]
+* [Putting It All Together]
