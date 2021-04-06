@@ -36,13 +36,10 @@ echo "For a near instant entry into a RAPIDS Library experience, or if we haven'
 
 install_RAPIDS () {
     echo "Checking for GPU type:"
-    python colab/env-check.py
+    python cusignal-icassp-tutorial/colab/env-check.py
 
     if [ ! -f Miniconda3-4.5.4-Linux-x86_64.sh ]; then
-        echo "Removing conflicting packages, will replace with RAPIDS compatible versions"
-        # remove existing xgboost and dask installs
-        pip uninstall -y dask distributed xgboost pyarrow numba llvmlite PySocks requests six urllib3 cffi
-
+       
         # intall miniconda
         echo "Installing conda"
         wget -nc https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
