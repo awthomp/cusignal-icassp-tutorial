@@ -47,7 +47,25 @@ python
 No GPU? No problem. We can use Google Colab for access to a no-cost GPU instance.
 1. Navigate to Colab via [this link](https://colab.research.google.com/notebooks/intro.ipynb). If you're unfamiliar with notebook based programming (or Colab in general), feel free to take a few minutes to explore the getting started guide.
 2. Click `File -> New Notebook` to create a new Colab notebook.
-3. Install cuSignal
+3. Select a GPU based runtime via `Runtime -> Change Runtime Type -> GPU`
+4. Install cuSignal by placing the following code into the first cell of your notebook:
+
+```python
+!git clone https://github.com/awthomp/cusignal-icassp-tutorial.git
+!bash cusignal-icassp-tutorial/colab/cusignal-colab.sh 0.18
+
+import sys, os
+
+dist_package_index = sys.path.index('/usr/local/lib/python3.7/dist-packages')
+sys.path = sys.path[:dist_package_index] + ['/usr/local/lib/python3.7/site-packages'] + sys.path[dist_package_index:]
+```
+5. Confirm functional environment by executing the following:
+
+```
+import cusignal
+import cupy as cp
+from numba import cuda
+```
 
 ## Notebooks Used in Today's Tutorial
 * [Introduction to cuSignal]
