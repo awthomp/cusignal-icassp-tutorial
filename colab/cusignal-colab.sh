@@ -85,7 +85,7 @@ install_RAPIDS () {
           
         echo "Copying shared object files to /usr/lib"
         # copy .so files to /usr/lib, where Colab's Python looks for libs
-        python rapidsai-csp-utils/colab/copy_libs.py
+        python cusignal-icassp-tutorial/colab/copy_libs.py
     fi
 
     echo ""
