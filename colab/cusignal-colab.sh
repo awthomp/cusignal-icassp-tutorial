@@ -37,6 +37,10 @@ echo "For a near instant entry into a RAPIDS Library experience, or if we haven'
 install_RAPIDS () {
     echo "Checking for GPU type:"
     python cusignal-icassp-tutorial/colab/env-check.py
+    if [ $? -ne 0 ]; then
+      echo -e "\nError during environment check! Exiting"
+      exit
+    fi
 
     if [ ! -f Miniconda3-4.5.4-Linux-x86_64.sh ]; then
        
