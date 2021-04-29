@@ -61,10 +61,14 @@ sys.path = sys.path[:dist_package_index] + ['/usr/local/lib/python3.7/site-packa
 ```
 5. Confirm functional environment by executing the following:
 
-```
+```python
 import cusignal
 import cupy as cp
 from numba import cuda
+
+# Check versions
+print(cusignal.__version__)
+print(cp.__version__)
 ```
 
 ## Notebooks Used in Today's Tutorial
