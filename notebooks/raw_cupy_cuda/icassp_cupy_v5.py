@@ -21,7 +21,7 @@ from scipy import signal
 
 # CuPy: Version 5
 # Implementations a user level cache from version 2.
-# Seperates 32 bit and 64 bit versions to 
+# Seperates 32 bit and 64 bit versions to
 # reduce register pressure from version 3.
 # Allows --use_fast_math flag to kernel compile from version 4.
 # Move CUDA to cu file and build a fatbin to load with CuPy.
@@ -36,36 +36,24 @@ def _lombscargle(x, y, freqs, pgram, y_dot):
         kernel = _kernel_cache[(str(pgram.dtype))]
     else:
         module = cp.RawModule(path="./_lombscargle.fatbin")
-        kernel = _kernel_cache[(str(pgram.dtype))] = module.get_function("_cupy_lombscargle_" + str(pgram.dtype))
+        kernel = _kernel_cache[(str(pgram.dtype))] = module.get_function(
+            "_cupy_lombscargle_" + str(pgram.dtype)
+        )
         print("Registers", kernel.num_regs)
 
     device_id = cp.cuda.Device()
     numSM = device_id.attributes["MultiProcessorCount"]
-    threadsperblock = (128, )
+    threadsperblock = (128,)
     blockspergrid = (numSM * 20,)
 
-    kernel_args = (
-            x.shape[0],
-            freqs.shape[0],
-            x,
-            y,
-            freqs,
-            pgram,
-            y_dot,
-        )
+    kernel_args = (x.shape[0], freqs.shape[0], x, y, freqs, pgram, y_dot)
 
     kernel(blockspergrid, threadsperblock, kernel_args)
 
     cp.cuda.runtime.deviceSynchronize()
 
 
-def lombscargle(
-    x,
-    y,
-    freqs,
-    precenter=False,
-    normalize=False,
-):
+def lombscargle(x, y, freqs, precenter=False, normalize=False):
 
     x = cp.asarray(x)
     y = cp.asarray(y)
@@ -115,7 +103,7 @@ if __name__ == "__main__":
     f = np.linspace(0.01, 10, out_samps)
 
     # Use float32 else float64
-    if dtype == 'float32':
+    if dtype == "float32":
         x = x.astype(np.float32)
         y = y.astype(np.float32)
         f = f.astype(np.float32)
@@ -136,7 +124,7 @@ if __name__ == "__main__":
     gpu_lombscargle = cp.asnumpy(gpu_lombscargle)
 
     # Compare results
-    np.testing.assert_allclose(cpu_lombscargle, gpu_lombscargle, 1e-3)    
+    np.testing.assert_allclose(cpu_lombscargle, gpu_lombscargle, 1e-3)
 
     # Run multiple passes to get average
     for _ in range(loops):

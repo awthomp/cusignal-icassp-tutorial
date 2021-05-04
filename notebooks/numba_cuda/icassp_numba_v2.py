@@ -88,43 +88,41 @@ def _numba_lombscargle(x, y, freqs, pgram, y_dot):
 
 def _numba_lombscargle_signature(ty):
     return void(
-        ty[::1], ty[::1], ty[::1], ty[::1], ty[::1],  # x  # y  # freqs  # pgram  # y_dot
+        ty[::1],
+        ty[::1],
+        ty[::1],
+        ty[::1],
+        ty[::1],  # x  # y  # freqs  # pgram  # y_dot
     )
 
 
 def _lombscargle(x, y, freqs, pgram, y_dot):
 
-    if (pgram.dtype == 'float32'):
+    if pgram.dtype == "float32":
         numba_type = float32
-    elif (pgram.dtype == 'float64'):
+    elif pgram.dtype == "float64":
         numba_type = float64
 
     if (str(numba_type)) in _kernel_cache:
         kernel = _kernel_cache[(str(numba_type))]
     else:
         sig = _numba_lombscargle_signature(numba_type)
-        kernel = _kernel_cache[(str(numba_type))] = cuda.jit(sig)(_numba_lombscargle)
+        kernel = _kernel_cache[(str(numba_type))] = cuda.jit(sig)(
+            _numba_lombscargle
+        )
         print("Registers", kernel._func.get().attrs.regs)
 
     device_id = cp.cuda.Device()
     numSM = device_id.attributes["MultiProcessorCount"]
-    threadsperblock = (128, )
+    threadsperblock = (128,)
     blockspergrid = (numSM * 20,)
 
     kernel[blockspergrid, threadsperblock](x, y, freqs, pgram, y_dot)
 
     cuda.synchronize()
 
-    
 
-
-def lombscargle(
-    x,
-    y,
-    freqs,
-    precenter=False,
-    normalize=False,
-):
+def lombscargle(x, y, freqs, precenter=False, normalize=False):
 
     pgram = cuda.device_array_like(freqs)
 
@@ -171,7 +169,7 @@ if __name__ == "__main__":
     f = np.linspace(0.01, 10, out_samps)
 
     # Use float32 else float64
-    if dtype == 'float32':
+    if dtype == "float32":
         x = x.astype(np.float32)
         y = y.astype(np.float32)
         f = f.astype(np.float32)
@@ -192,7 +190,7 @@ if __name__ == "__main__":
     gpu_lombscargle = gpu_lombscargle.copy_to_host()
 
     # Compare results
-    np.testing.assert_allclose(cpu_lombscargle, gpu_lombscargle, 1e-3)    
+    np.testing.assert_allclose(cpu_lombscargle, gpu_lombscargle, 1e-3)
 
     # Run multiple passes to get average
     for _ in range(loops):

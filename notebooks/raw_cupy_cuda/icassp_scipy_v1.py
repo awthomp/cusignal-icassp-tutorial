@@ -36,9 +36,9 @@ if __name__ == "__main__":
     x = x[r >= frac_points]
     y = A * np.cos(w * x + phi)
     f = np.linspace(0.01, 10, out_samps)
-    
+
     # Use float32 else float64
-    if dtype == 'float32':
+    if dtype == "float32":
         x = x.astype(np.float32)
         y = y.astype(np.float32)
         f = f.astype(np.float32)
