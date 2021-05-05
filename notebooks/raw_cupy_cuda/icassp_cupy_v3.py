@@ -222,14 +222,15 @@ if __name__ == "__main__":
 
     dtype = sys.argv[1]
     loops = int(sys.argv[2])
+    check = int(sys.argv[3])
 
     A = 2.0
     w = 1.0
     phi = 0.5 * np.pi
     frac_points = 0.9  # Fraction of points to select
 
-    in_samps = 2 ** 10
-    out_samps = 2 ** 20
+    in_samps = 2 ** 16
+    out_samps = 2 ** 22
 
     np.random.seed(1234)
     r = np.random.rand(in_samps)
@@ -248,19 +249,22 @@ if __name__ == "__main__":
     d_y = cp.array(y)
     d_f = cp.array(f)
 
-    # Run baseline with scipy.signal.lombscargle
-    with prof.time_range("scipy_lombscargle", 0):
-        cpu_lombscargle = signal.lombscargle(x, y, f)
+    
 
     # Run Numba version
-    with prof.time_range("cupy_lombscargle", 1):
+    with prof.time_range("cupy_lombscargle", 0):
         gpu_lombscargle = lombscargle(d_x, d_y, d_f)
 
-    # Copy result to host
-    gpu_lombscargle = cp.asnumpy(gpu_lombscargle)
+    if check:
+        # Run baseline with scipy.signal.lombscargle
+        with prof.time_range("scipy_lombscargle", 1):
+            cpu_lombscargle = signal.lombscargle(x, y, f)
 
-    # Compare results
-    np.testing.assert_allclose(cpu_lombscargle, gpu_lombscargle, 1e-3)
+        # Copy result to host
+        gpu_lombscargle = cp.asnumpy(gpu_lombscargle)
+
+        # Compare results
+        np.testing.assert_allclose(cpu_lombscargle, gpu_lombscargle, 1e-3)
 
     # Run multiple passes to get average
     for _ in range(loops):
