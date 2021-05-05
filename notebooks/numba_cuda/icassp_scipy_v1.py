@@ -11,6 +11,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# SciPy Signal Lombscargle Cython code
+# https://github.com/scipy/scipy/blob/v1.6.3/scipy/signal/_spectral.pyx
+# for i in range(freqs.shape[0]):
+
+#     xc = 0.
+#     xs = 0.
+#     cc = 0.
+#     ss = 0.
+#     cs = 0.
+
+#     for j in range(x.shape[0]):
+
+#         c = cos(freqs[i] * x[j])
+#         s = sin(freqs[i] * x[j])
+
+#         xc += y[j] * c
+#         xs += y[j] * s
+#         cc += c * c
+#         ss += s * s
+#         cs += c * s
+
+#     tau = atan2(2 * cs, cc - ss) / (2 * freqs[i])
+#     c_tau = cos(freqs[i] * tau)
+#     s_tau = sin(freqs[i] * tau)
+#     c_tau2 = c_tau * c_tau
+#     s_tau2 = s_tau * s_tau
+#     cs_tau = 2 * c_tau * s_tau
+
+#     pgram[i] = 0.5 * (((c_tau * xc + s_tau * xs)**2 / \
+#         (c_tau2 * cc + cs_tau * cs + s_tau2 * ss)) + \
+#         ((c_tau * xs - s_tau * xc)**2 / \
+#         (c_tau2 * ss - cs_tau * cs + s_tau2 * cc)))
+
+# return pgram
+
 import numpy as np
 import sys
 

@@ -249,8 +249,6 @@ if __name__ == "__main__":
     d_y = cp.array(y)
     d_f = cp.array(f)
 
-    
-
     # Run Numba version
     with prof.time_range("cupy_lombscargle", 0):
         gpu_lombscargle = lombscargle(d_x, d_y, d_f)
