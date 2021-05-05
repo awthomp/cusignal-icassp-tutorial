@@ -134,7 +134,7 @@ __device__ void _cupy_lombscargle_double( const int x_shape,
             cs += c * s;
         }
 
-        T tau { atan2( 2.0f * cs, cc - ss ) / ( 2.0f * freq ) };
+        T tau { atan2( 2.0 * cs, cc - ss ) / ( 2.0 * freq ) };
         T c_tau { cos( freq * tau ) };
         T s_tau { sin( freq * tau ) };
         T c_tau2 { c_tau * c_tau };

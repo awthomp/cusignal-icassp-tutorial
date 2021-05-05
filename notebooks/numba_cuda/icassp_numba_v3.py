@@ -32,26 +32,24 @@ _kernel_cache = {}
 
 def _numba_lombscargle_32(x, y, freqs, pgram, y_dot):
 
-    dtype = float32
-
     F = cuda.grid(1)
     strideF = cuda.gridsize(1)
 
     if not y_dot[0]:
-        yD = dtype(1.0)
+        yD = float32(1.0)
     else:
-        yD = dtype(2.0) / y_dot[0]
+        yD = float32(2.0) / y_dot[0]
 
     for i in range(F, int32(freqs.shape[0]), strideF):
 
         # Copy data to registers
         freq = freqs[i]
 
-        xc = dtype(0.0)
-        xs = dtype(0.0)
-        cc = dtype(0.0)
-        ss = dtype(0.0)
-        cs = dtype(0.0)
+        xc = float32(0.0)
+        xs = float32(0.0)
+        cc = float32(0.0)
+        ss = float32(0.0)
+        cs = float32(0.0)
 
         for j in range(int32(x.shape[0])):
 
@@ -64,15 +62,15 @@ def _numba_lombscargle_32(x, y, freqs, pgram, y_dot):
             ss += s * s
             cs += c * s
 
-        tau = atan2(dtype(2.0) * cs, cc - ss) / (dtype(2.0) * freq)
+        tau = atan2(float32(2.0) * cs, cc - ss) / (float32(2.0) * freq)
         c_tau = cos(freq * tau)
         s_tau = sin(freq * tau)
         c_tau2 = c_tau * c_tau
         s_tau2 = s_tau * s_tau
-        cs_tau = dtype(2.0) * c_tau * s_tau
+        cs_tau = float32(2.0) * c_tau * s_tau
 
         pgram[i] = (
-            dtype(0.5)
+            float32(0.5)
             * (
                 (
                     (c_tau * xc + s_tau * xs) ** 2
