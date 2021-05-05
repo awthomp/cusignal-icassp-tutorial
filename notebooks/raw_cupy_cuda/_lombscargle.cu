@@ -29,7 +29,9 @@
     --generate-code arch=compute_62,code=sm_62 \
     --generate-code arch=compute_70,code=sm_70 \
     --generate-code arch=compute_72,code=sm_72 \
-    --generate-code arch=compute_75,code=[sm_75,compute_75] \
+	--generate-code arch=compute_75,code=sm_75 \
+	--generate-code arch=compute_80,code=sm_80 \
+    --generate-code arch=compute_86,code=[sm_86,compute_86] \
     _lombscargle.cu -odir .
 */
 

@@ -32,7 +32,7 @@
 	--generate-code arch=compute_75,code=sm_75 \
 	--generate-code arch=compute_80,code=sm_80 \
     --generate-code arch=compute_86,code=[sm_86,compute_86] \
-    _lombscargle_lb.cu -odir .
+    _lombscargle_lb_trig.cu -odir .
 */
 
 template<typename T>
@@ -67,8 +67,7 @@ __device__ void _cupy_lombscargle_float( const int x_shape,
         T s {};
 
         for ( int j = 0; j < x_shape; j++ ) {
-            c = cosf( freq * x[j] );
-            s = sinf( freq * x[j] );
+            sincosf( freq * x[j], &s, &c );
 
             xc += y[j] * c;
             xs += y[j] * s;
@@ -77,9 +76,10 @@ __device__ void _cupy_lombscargle_float( const int x_shape,
             cs += c * s;
         }
 
+		T c_tau {};
+        T s_tau {};
         T tau { atan2f( 2.0f * cs, cc - ss ) / ( 2.0f * freq ) };
-        T c_tau { cosf( freq * tau ) };
-        T s_tau { sinf( freq * tau ) };
+        sincosf( freq * tau, &s_tau, &c_tau );
         T c_tau2 { c_tau * c_tau };
         T s_tau2 { s_tau * s_tau };
         T cs_tau { 2.0f * c_tau * s_tau };
@@ -124,8 +124,7 @@ __device__ void _cupy_lombscargle_double( const int x_shape,
         T s {};
 
         for ( int j = 0; j < x_shape; j++ ) {
-            c = cos( freq * x[j] );
-            s = sin( freq * x[j] );
+            sincos( freq * x[j], &s, &c );
 
             xc += y[j] * c;
             xs += y[j] * s;
@@ -134,9 +133,10 @@ __device__ void _cupy_lombscargle_double( const int x_shape,
             cs += c * s;
         }
 
+		T c_tau {};
+        T s_tau {};
         T tau { atan2( 2.0f * cs, cc - ss ) / ( 2.0f * freq ) };
-        T c_tau { cos( freq * tau ) };
-        T s_tau { sin( freq * tau ) };
+        sincos( freq * tau, &s_tau, &c_tau );
         T c_tau2 { c_tau * c_tau };
         T s_tau2 { s_tau * s_tau };
         T cs_tau { 2.0 * c_tau * s_tau };

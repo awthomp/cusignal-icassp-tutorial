@@ -17,103 +17,35 @@ import sys
 
 from cupy import prof
 from scipy import signal
-from string import Template
 
 
-# CuPy: Version 1
-# Naive implementation of CuPy
+# CuPy: Version 6
+# Implementations a user level cache from version 2.
+# Seperates 32 bit and 64 bit versions to
+# reduce register pressure from version 3.
+# Allows --use_fast_math flag to kernel compile from version 4.
+# Move CUDA to cu file and build a fatbin to load with CuPy from version 5.
+# Add launch bounds to CUDA kernel to assist compiler.
 
 
-_cupy_lombscargle_src = Template(
-    """
-extern "C" {
-    __global__ void _cupy_lombscargle(
-            const int x_shape,
-            const int freqs_shape,
-            const ${datatype} * __restrict__ x,
-            const ${datatype} * __restrict__ y,
-            const ${datatype} * __restrict__ freqs,
-            ${datatype} * __restrict__ pgram,
-            const ${datatype} * __restrict__ y_dot
-            ) {
-
-        const int tx {
-            static_cast<int>( blockIdx.x * blockDim.x + threadIdx.x ) };
-        const int stride { static_cast<int>( blockDim.x * gridDim.x ) };
-
-        ${datatype} yD {};
-        if ( y_dot[0] == 0 ) {
-            yD = 1.0;
-        } else {
-            yD = 2.0 / y_dot[0];
-        }
-
-        for ( int tid = tx; tid < freqs_shape; tid += stride ) {
-
-            ${datatype} freq { freqs[tid] };
-            ${datatype} xc {};
-            ${datatype} xs {};
-            ${datatype} cc {};
-            ${datatype} ss {};
-            ${datatype} cs {};
-            ${datatype} c {};
-            ${datatype} s {};
-
-            for ( int j = 0; j < x_shape; j++ ) {
-                c = cos( freq * x[j] );
-                s = sin( freq * x[j] );
-                xc += y[j] * c;
-                xs += y[j] * s;
-                cc += c * c;
-                ss += s * s;
-                cs += c * s;
-            }
-
-            ${datatype} tau { static_cast<${datatype}>( atan2( 
-                static_cast<${datatype}>( 2.0 * cs ), cc - ss ) / ( 2.0 * freq ) ) };
-            ${datatype} c_tau { cos(freq * tau) };
-            ${datatype} s_tau { sin(freq * tau) };
-            ${datatype} c_tau2 { c_tau * c_tau };
-            ${datatype} s_tau2 { s_tau * s_tau };
-            ${datatype} cs_tau { static_cast<${datatype}>( 2.0 * c_tau * s_tau ) };
-
-            pgram[tid] = (
-                0.5 * (
-                   (
-                       ( c_tau * xc + s_tau * xs )
-                       * ( c_tau * xc + s_tau * xs )
-                       / ( c_tau2 * cc + cs_tau * cs + s_tau2 * ss )
-                    )
-                   + (
-                       ( c_tau * xs - s_tau * xc )
-                       * ( c_tau * xs - s_tau * xc )
-                       / ( c_tau2 * ss - cs_tau * cs + s_tau2 * cc )
-                    )
-                )
-            ) * yD;
-        }
-    }
-}
-"""
-)
+_kernel_cache = {}
 
 
 def _lombscargle(x, y, freqs, pgram, y_dot):
 
-    if pgram.dtype == "float32":
-        c_type = "float"
-    elif pgram.dtype == "float64":
-        c_type = "double"
+    if (str(pgram.dtype)) in _kernel_cache:
+        kernel = _kernel_cache[(str(pgram.dtype))]
+    else:
+        module = cp.RawModule(path="./_lombscargle_lb_trig.fatbin")
+        kernel = _kernel_cache[(str(pgram.dtype))] = module.get_function(
+            "_cupy_lombscargle_" + str(pgram.dtype)
+        )
+        print("Registers", kernel.num_regs)
 
     device_id = cp.cuda.Device()
     numSM = device_id.attributes["MultiProcessorCount"]
     threadsperblock = (128,)
     blockspergrid = (numSM * 20,)
-
-    src = _cupy_lombscargle_src.substitute(datatype=c_type)
-    module = cp.RawModule(code=src, options=("-std=c++11",))
-    kernel = module.get_function("_cupy_lombscargle")
-    # print("Registers", kernel.num_regs)
 
     kernel_args = (x.shape[0], freqs.shape[0], x, y, freqs, pgram, y_dot)
 
@@ -124,6 +56,9 @@ def _lombscargle(x, y, freqs, pgram, y_dot):
 
 def lombscargle(x, y, freqs, precenter=False, normalize=False):
 
+    x = cp.asarray(x)
+    y = cp.asarray(y)
+    freqs = cp.asarray(freqs)
     pgram = cp.empty(freqs.shape[0], dtype=freqs.dtype)
 
     assert x.ndim == 1
@@ -134,7 +69,7 @@ def lombscargle(x, y, freqs, precenter=False, normalize=False):
     if x.shape[0] != y.shape[0]:
         raise ValueError("Input arrays do not have the same size.")
 
-    y_dot = cp.empty(1, dtype=y.dtype)
+    y_dot = cp.zeros(1, dtype=y.dtype)
     if normalize:
         cp.dot(y, y, out=y_dot)
 

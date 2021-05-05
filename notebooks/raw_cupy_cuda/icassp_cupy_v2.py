@@ -171,7 +171,7 @@ if __name__ == "__main__":
     phi = 0.5 * np.pi
     frac_points = 0.9  # Fraction of points to select
 
-    in_samps = 2 ** 16
+    in_samps = 2 ** 14
     out_samps = 2 ** 20
 
     np.random.seed(1234)
