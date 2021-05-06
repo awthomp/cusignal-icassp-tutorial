@@ -11,6 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# https://github.com/awthomp/cusignal-icassp-tutorial/blob/main/notebooks/numba_cuda/icassp_scipy_v1.py
+
 # SciPy Signal Lombscargle Cython code
 # https://github.com/scipy/scipy/blob/v1.6.3/scipy/signal/_spectral.pyx
 # for i in range(freqs.shape[0]):
