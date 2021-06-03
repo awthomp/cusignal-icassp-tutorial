@@ -72,8 +72,8 @@ print(cp.__version__)
 ```
 
 ## Notebooks Used in Today's Tutorial
-* [Introduction to cuSignal]
-* [CuPy Overview and Elementwise Kernels]
-* [Numba Overview and Custom CUDA Kernels]
-* [Brief Introduction of Raw CUDA Kernels]
-* [Putting It All Together]
+* [Introduction to cuSignal](https://github.com/awthomp/cusignal-icassp-tutorial/blob/main/notebooks/cusignal_api/cusignal_api_examples.ipynb)
+* [End to End Example with cuSignal and PyTorch](https://github.com/awthomp/cusignal-icassp-tutorial/blob/main/notebooks/cusignal_api/cusignal_AI_training.ipynb)
+* [CuPy Elementwise CUDA Kernels](https://github.com/awthomp/cusignal-icassp-tutorial/blob/main/notebooks/cupy_elementwise/cupy_elementwise_examples.ipynb)
+* [Numba Overview and Custom CUDA Kernels](https://github.com/awthomp/cusignal-icassp-tutorial/blob/main/notebooks/numba_cuda/numba_cuda_examples.ipynb)
+* [Raw CuPy CUDA Kernels](https://github.com/awthomp/cusignal-icassp-tutorial/tree/main/notebooks/raw_cupy_cuda)
