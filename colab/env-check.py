@@ -1,4 +1,9 @@
-import pynvml
+import sys
+try:
+  import pynvml
+except ImportError as e:
+  print('Error importing pynvml. Ensure session has GPU access.')
+  sys.exit(1)
 
 pynvml.nvmlInit()
 gpu_name = pynvml.nvmlDeviceGetName(pynvml.nvmlDeviceGetHandleByIndex(0)).decode('UTF-8')

@@ -2,9 +2,9 @@
 
 MULT="100"
 
-STABLE=18
-NIGHTLIES=19
-LOWEST=17
+STABLE=19
+NIGHTLIES=20
+LOWEST=18
 
 CTK_VERSION=11.0
 
@@ -15,7 +15,7 @@ echo "PLEASE READ"
 echo "********************************************************************************************************"
 echo "Changes:"
 echo "1. IMPORTANT SCRIPT CHANGES: Colab has updated to Python 3.7, and now runs our STABLE and NIGHTLY versions (0.$STABLE and 0.$NIGHTLIES)!  PLEASE update your older install script code as follows:"
-echo "	!bash rapidsai-csp-utils/colab/rapids-colab.sh 0.18"
+echo "	!bash rapidsai-csp-utils/colab/rapids-colab.sh 0.19"
 echo ""
 echo "	import sys, os"
 echo ""
@@ -37,6 +37,10 @@ echo "For a near instant entry into a RAPIDS Library experience, or if we haven'
 install_RAPIDS () {
     echo "Checking for GPU type:"
     python cusignal-icassp-tutorial/colab/env-check.py
+    if [ $? -ne 0 ]; then
+      echo -e "\nError during environment check! Exiting"
+      exit
+    fi
 
     if [ ! -f Miniconda3-4.5.4-Linux-x86_64.sh ]; then
        
