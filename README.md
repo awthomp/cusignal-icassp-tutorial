@@ -13,7 +13,7 @@ We know that 2020 has been *a year* to say the least, and it goes without saying
 Let's get started.
 
 ## Presentation Materials
-Before we jump into code, we'll be walking through a presentation concerning the usecases, features, performance, and techncial backend of cuSignal. You can find a copy of these slides [here](UPDATE FUTURE URL).
+Before we jump into code, we'll be walking through a presentation concerning the usecases, features, performance, and techncial backend of cuSignal. You can find a copy of these slides [here](https://github.com/awthomp/cusignal-icassp-tutorial/tree/main/slides). Note: We only have PDF slides for parts 1 and 2 of our talk.
 
 ## Installing cuSignal
 cuSignal has been tested on and supports all modern GPUs - from Maxwell to Ampere. While Anaconda is the preferred installation mechanism for cuSignal, developers and Jetson users should follow the source build instructions below. As of cuSignal 0.16, there isn't a cuSignal conda package for aarch64. In general, it's assumed that the developer has already installed the [NVIDIA CUDA Toolkit](https://developer.nvidia.com/cuda-toolkit) and associated GPU drivers.
